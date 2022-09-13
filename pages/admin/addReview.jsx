@@ -2,50 +2,67 @@ import React, { useState, useEffect } from "react";
 import { getCategories } from "../../services";
 const AddReview = () => {
   const [categories, setCategories] = useState([]);
+  const [error, setError] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [formData, setFormData] = useState({
+    title: "",
+    image: "",
+    excerpt: "",
+    content: "",
+    featured: "",
+    category: "",
+    author: "Alex Armstrong",
+  });
+  const [category, setCategory] = useState("");
 
   useEffect(() => {
     getCategories().then((newCategories) => setCategories(newCategories));
   }, []);
-  const [error, setError] = useState(false);
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [formData, setFormData] = useState({
-    title: null,
-    image: null,
-    excerpt: null,
-    content: null,
-    featured: false,
-    author: "Alex Armstrong",
-  });
+
+  const handleChange = (event) => {
+    const value = event.target.value;
+    const name = event.target.name;
+    console.log(name + " " + value);
+    // setFormData({ [name]: value });
+    // console.log(formData.category);
+    setCategory(value);
+    setFormData({ category: value });
+    console.log(formData.category);
+  };
+
   return (
     <div className="bg-white shadow-lg rounded-lg p-8 pb-12 mb-8">
       <h3 className="text-xl mb-8 font-semibold border-b pb-4">Add A Review</h3>
       <div className="grid grid-cols-1 gap-4 mb-4">
-        <select className="p-4 outline-none w-full rounded-lg focus:ring-2 focus:ring-gray-200 bg-gray-100 text-gray-700">
+        <select
+          className="p-4 outline-none w-full rounded-lg focus:ring-2 focus:ring-gray-200 bg-gray-100 text-gray-700"
+          name="category"
+          defaultValue={"DEFAULT"}
+          onChange={handleChange}
+        >
           <option
             className="md:float-right mt-2 align-middle text-white ml-4 font-semibold cursor-pointer"
-            value=""
+            value="DEFAULT"
             disabled
-            selected
           >
             Select your option
           </option>
           {categories.map((category) => (
-            <option className="md:float-right mt-2 align-middle text-white ml-4 font-semibold cursor-pointer">
+            <option
+              key={category.name}
+              className="md:float-right mt-2 align-middle text-white ml-4 font-semibold cursor-pointer"
+            >
               {category.name}
             </option>
           ))}
         </select>
-        <input
-          className="p-4 outline-none w-full rounded-lg focus:ring-2 focus:ring-gray-200 bg-gray-100 text-gray-700"
-          type="search"
-          placeholder="Review Category"
-        />
       </div>
       <div className="grid grid-cols-1 gap-4 mb-4">
         <input
           className="p-4 outline-none w-full rounded-lg focus:ring-2 focus:ring-gray-200 bg-gray-100 text-gray-700"
-          type="search"
+          type="file"
           placeholder="Movie Poster"
+          //   onChange={getPosterSearch}
         />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
@@ -55,6 +72,8 @@ const AddReview = () => {
           //   ref={nameEl}
           placeholder="Movie Title"
           name="title"
+          onChange={handleChange}
+          value={formData.title}
         />
         <input
           type="number"
