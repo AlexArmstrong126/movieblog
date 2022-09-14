@@ -1,29 +1,22 @@
 import React, { useState, useEffect } from "react";
 
 const ImagePreview = (poster) => {
-  const [imageUri, setImageUri] = useState(null);
+  const [imageUrl, setImageUrl] = useState(
+    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+  );
 
   useEffect(() => {
-    if (Object.values(poster)[0].length > 0) {
-      // console.log(Object.values(poster)[0]);
-      const str2blob = (txt) => new Blob([txt]);
-      setImageUri(URL.createObjectURL(str2blob(Object.values(poster)[0])));
+    if (Object.values(poster)[0] !== "") {
+      setImageUrl(Object.values(poster)[0].imagePreview);
     }
   }, [poster]);
 
   return (
     <div className="bg-white shadow-lg rounded-lg p-8 mb-8 h-full">
       <h3 className="text-xl mb-8 font-semibold border-b pb-4 text-center">
-        Preview
+        Image Preview
       </h3>
-      {
-        imageUri === null ? (
-          console.log("empty")
-        ) : (
-          <img src={imageUri} alt="test" />
-        )
-        // console.log(imageUri)
-      }
+      <img src={imageUrl} alt={imageUrl} id="img" className=" rounded-md" />
     </div>
   );
 };

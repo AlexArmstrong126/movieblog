@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getCategories } from "../../services";
+import { submitReview } from "../../services";
 import ImagePreview from "./imagePreview";
 const AddReview = () => {
   const [categories, setCategories] = useState([]);
@@ -13,8 +14,10 @@ const AddReview = () => {
     excerpt: "",
     content: "",
     featured: true,
+    slug: "",
     author: "Alex Armstrong",
   });
+  const [imagePreview, setImagePreview] = useState("");
 
   useEffect(() => {
     getCategories().then((newCategories) => setCategories(newCategories));
@@ -24,13 +27,55 @@ const AddReview = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleImageChange = (e) => {
+    let path = e.target.value;
+    let fileName = path.replace(/^C:\\fakepath\\/, "");
+    setFormData({ ...formData, [e.target.name]: fileName });
+
+    setImagePreview({
+      imagePreview: URL.createObjectURL(e.target.files[0]),
+    });
+  };
+
   const handleCheck = (e) => {
     setFormData({ ...formData, featured: !formData.featured });
   };
 
   const handleSubmit = (evt) => {
+    const title = formData.title;
+    const slug = formData.slug;
+    const excerpt = formData.excerpt;
+    const content = formData.content;
+    const featuredImage = "thor.jpeg";
+    const featuredPost = formData.featured;
+    const author = formData.author;
+    const categories = formData.category;
+    //   const { value: comments } = formData.;
+    const score = formData.score;
     evt.preventDefault();
-    console.log(formData);
+    // console.log(title);
+
+    const reviewObj = {
+      title,
+      excerpt,
+      slug,
+      content,
+      featuredImage,
+      featuredPost,
+      author,
+      categories,
+      score,
+    };
+
+    console.log(reviewObj);
+
+    submitReview(reviewObj).then((res) => {
+      setShowSuccessMessage(true);
+      setTimeout(() => {
+        setShowSuccessMessage(false);
+      }, 3000);
+      // console.log(res);
+    });
   };
 
   return (
@@ -72,8 +117,17 @@ const AddReview = () => {
                 type="file"
                 placeholder="Movie Poster"
                 name="image"
-                onChange={handleChange}
+                onChange={handleImageChange}
                 required
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-4 mb-4">
+              <input
+                //   ref={commentEl}
+                className="p-4 outline-none w-full rounded-lg focus:ring-2 focus:ring-gray-200 bg-gray-100 text-gray-700"
+                placeholder="Page Link"
+                name="slug"
+                onChange={handleChange}
               />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
@@ -91,6 +145,8 @@ const AddReview = () => {
                 //   ref={emailEl}
                 placeholder="Score /10"
                 name="score"
+                max={10}
+                min={0}
                 onChange={handleChange}
               />
             </div>
@@ -153,7 +209,7 @@ const AddReview = () => {
       </div>
       <div className="lg:col-span-4 col-span-1">
         <div className="lg:sticky relative top-8">
-          <ImagePreview poster={formData.image} />
+          <ImagePreview poster={imagePreview} />
         </div>
       </div>
     </>

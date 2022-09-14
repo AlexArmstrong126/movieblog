@@ -118,9 +118,7 @@ export const getPostDetails = async (slug) => {
           name
           slug
         }
-        content {
-          raw
-        }
+        content
       }
     }
   `;
@@ -131,6 +129,18 @@ export const getPostDetails = async (slug) => {
 
 export const submitComment = async (obj) => {
   const result = await fetch("/api/comments", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(obj),
+  });
+
+  return result.json();
+};
+
+export const submitReview = async (obj) => {
+  const result = await fetch("/api/posts", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
