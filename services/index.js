@@ -135,7 +135,7 @@ export const submitComment = async (obj) => {
     },
     body: JSON.stringify(obj),
   });
-
+  // console.log(result.json());
   return result.json();
 };
 
@@ -147,7 +147,7 @@ export const submitReview = async (obj) => {
     },
     body: JSON.stringify(obj),
   });
-
+  // console.log(result.json);
   return result.json();
 };
 

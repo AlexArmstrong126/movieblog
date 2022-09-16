@@ -1,21 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getCategories } from "../../services";
 import { submitReview } from "../../services";
 import ImagePreview from "./imagePreview";
 const AddReview = () => {
+  const titleEl = useRef();
+  const slugEl = useRef();
+  const excerptEl = useRef();
+  const featuredImageEl = useRef();
+  const featuredPostEl = useRef();
+  const authorEl = useRef("Alex Armstrong");
+  const categoriesEl = useRef();
+  const scoreEl = useRef();
+  const contentEl = useRef();
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [featuredPostSubmit, setFeaturedPostSubmit] = useState(false);
+
   const [formData, setFormData] = useState({
-    category: "",
     image: "",
-    title: "",
-    score: 0,
-    excerpt: "",
-    content: "",
-    featured: true,
-    slug: "",
-    author: "Alex Armstrong",
   });
   const [imagePreview, setImagePreview] = useState("");
 
@@ -30,7 +33,7 @@ const AddReview = () => {
   const handleImageChange = (e) => {
     let path = e.target.value;
     let fileName = path.replace(/^C:\\fakepath\\/, "");
-    setFormData({ ...formData, [e.target.name]: fileName });
+    // setFormData({ ...formData, [e.target.name]: fileName });
 
     setImagePreview({
       imagePreview: URL.createObjectURL(e.target.files[0]),
@@ -41,17 +44,21 @@ const AddReview = () => {
     setFormData({ ...formData, featured: !formData.featured });
   };
 
+  const checkHandler = () => {
+    setFeaturedPostSubmit((current) => !current);
+    console.log(typeof featuredPostSubmit);
+  };
+
   const handleSubmit = (evt) => {
-    const title = formData.title;
-    const slug = formData.slug;
-    const excerpt = formData.excerpt;
-    const content = formData.content;
-    const featuredImage = "thor.jpeg";
-    const featuredPost = formData.featured;
-    const author = formData.author;
-    const categories = formData.category;
-    //   const { value: comments } = formData.;
-    const score = formData.score;
+    const featuredPost = featuredPostSubmit;
+    const { value: title } = titleEl.current;
+    const { value: slug } = slugEl.current;
+    const { value: excerpt } = excerptEl.current;
+    // const { value: featuredImage } = featuredImageEl.current;
+    const { value: content } = contentEl.current;
+    const { value: author } = authorEl.current;
+    const { value: categories } = categoriesEl.current;
+    var score = parseInt(scoreEl.current.value);
     evt.preventDefault();
     // console.log(title);
 
@@ -60,9 +67,8 @@ const AddReview = () => {
       excerpt,
       slug,
       content,
-      featuredImage,
       featuredPost,
-      author,
+      // author,
       categories,
       score,
     };
@@ -91,7 +97,7 @@ const AddReview = () => {
                 className="p-4 outline-none w-full rounded-lg focus:ring-2 focus:ring-gray-200 bg-gray-100 text-gray-700"
                 name="category"
                 defaultValue={""}
-                onChange={handleChange}
+                ref={categoriesEl}
                 required
               >
                 <option
@@ -127,17 +133,18 @@ const AddReview = () => {
                 className="p-4 outline-none w-full rounded-lg focus:ring-2 focus:ring-gray-200 bg-gray-100 text-gray-700"
                 placeholder="Page Link"
                 name="slug"
-                onChange={handleChange}
+                ref={slugEl}
+                // onChange={handleChange}
               />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
               <input
                 // type="text"
                 className="py-2 px-4 outline-none w-full rounded-lg focus:ring-2 focus:ring-gray-200 bg-gray-100 text-gray-700"
-                //   ref={nameEl}
+                ref={titleEl}
                 placeholder="Movie Title"
                 name="title"
-                onChange={handleChange}
+                // onChange={handleChange}
               />
               <input
                 type="number"
@@ -145,18 +152,19 @@ const AddReview = () => {
                 //   ref={emailEl}
                 placeholder="Score /10"
                 name="score"
+                ref={scoreEl}
                 max={10}
                 min={0}
-                onChange={handleChange}
+                // onChange={handleChange}
               />
             </div>
             <div className="grid grid-cols-1 gap-4 mb-4">
               <textarea
-                //   ref={commentEl}
                 className="p-4 outline-none w-full rounded-lg focus:ring-2 focus:ring-gray-200 bg-gray-100 text-gray-700"
                 placeholder="Excerpt"
                 name="excerpt"
-                onChange={handleChange}
+                // onChange={handleChange}
+                ref={excerptEl}
               />
             </div>
             <div className="grid grid-cols-1 gap-4 mb-4">
@@ -165,19 +173,18 @@ const AddReview = () => {
                 className="p-4 outline-none w-full rounded-lg focus:ring-2 focus:ring-gray-200 bg-gray-100 text-gray-700"
                 placeholder="Review"
                 name="content"
-                onChange={handleChange}
+                ref={contentEl}
+                // onChange={handleChange}
               />
             </div>
             <div className="grid grid-cols-1 gap-4 mb-4">
               <div>
                 <input
-                  // ref={storeDataEl}
+                  onChange={checkHandler}
                   type="checkbox"
                   id="storeData"
                   name="featured"
-                  onChange={handleCheck}
-                  value={formData.featured}
-                  checked={formData.featured}
+                  checked={featuredPostSubmit}
                 />
                 <label
                   className="text-grey-500 cursor-pointer ml-2"

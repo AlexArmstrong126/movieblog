@@ -13,9 +13,9 @@ export default async function reviews(req, res) {
       $title: String!
       $slug: String!
       $excerpt: String!
-      $content: String!
       $score: Int!
-      $featuredImage: Asset!
+      $categories: String!
+      $content: String!
       $featuredPost: Boolean!
     ) {
       createPost(
@@ -23,12 +23,10 @@ export default async function reviews(req, res) {
           title: $title
           slug: $slug
           excerpt: $excerpt
-          content: $content
-          featuredPost: false
+          featuredPost: $featuredPost
           score: $score
-          featuredImage: {
-            create: { fileName: "$featuredImage", handle: "$featuredImage" }
-          }
+          categories: { connect: { name: $categories } }
+          content: $content
         }
       ) {
         id
@@ -37,6 +35,5 @@ export default async function reviews(req, res) {
   `;
 
   const result = await graphQLClient.request(query, req.body);
-
   return res.status(200).send(result);
 }
